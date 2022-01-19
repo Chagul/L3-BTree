@@ -54,5 +54,7 @@ def main():
     list = []
     btree.linearize(btree.root, list)
     print(list)
+    print(btree.isBalanced())
+
 if __name__ == "__main__":
     main()

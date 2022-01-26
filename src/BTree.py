@@ -76,3 +76,6 @@ class BTree:
             self.linearize(node.children[i],list)
             if i != len(node.keys):
                 list.append(node.keys[i])
+
+    def insert(self, node, valueToInsert):
+        None

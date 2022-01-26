@@ -13,7 +13,9 @@ class Node:
     def getChildrens(self):
         return self.children
 
-    def searchKey(self,key):
-        if(key in self.keys):
-            return True
-        return False
+    def setKey(self,key):
+        self.keys.extend(key)
+        self.keys.sort()
+
+    def setChildren(self, newChildrens):
+        self.children = newChildrens

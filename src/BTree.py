@@ -12,8 +12,27 @@ class BTree:
     def isValid(self):
         return self.isLinear() and self.isBalanced() and self.rightNumberOfKeys(self.root)
 
-    def recherche(self, valueSearched):
-        None
+    def search(self, node, valueSearched):
+        # si dans noeud courant
+        if valueSearched in node.keys :
+            return True
+        #si il n'y a plus d'enfant, la valeur n'est pas là
+        if len(node.children) == 0:
+            return False
+        #partie gauche de la premiere cléf
+        if(valueSearched < node.keys[0]):
+            return self.search(node.children[0], valueSearched)
+        #partie droite de la dernière clef
+        if(valueSearched >  node.keys[len(node.keys) -1 ]):
+            return self.search(node.children[len(node.children)- 1], valueSearched)
+
+        #pour chaque enfant
+        for i in range(len(node.keys) - 1):
+            rangeMaxKey = node.keys[i+1]
+            possibleValues = range(node.keys[i], rangeMaxKey)
+            #si la clef est entre la premiere clef et la derniere clef de l'enfant i
+            if valueSearched in list(possibleValues) :
+                return self.search(node.children[i+1], valueSearched)
 
     def isLinear(self):
         list = []

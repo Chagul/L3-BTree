@@ -54,12 +54,14 @@ def main():
     list = []
     btree.linearize(btree.root, list)
     print(list)
-    #print("Valid  ", btree.isValid())
-    print("Balanced ", btree.isBalanced())
-    print("RightNumberOfKeys", btree.rightNumberOfKeys(btree.root))
-    print("Linear ", btree.isLinear())
+    # print("Valid  ", btree.isValid())
+    for i in range(51) :
+        print(i, ", ", btree.search(btree.root, i))
 
-    print(btree.isBalanced())
+    #print("Balanced ", btree.isBalanced())
+    #print("RightNumberOfKeys", btree.rightNumberOfKeys(btree.root))
+    #print("Linear ", btree.isLinear())
+
 
 if __name__ == "__main__":
     main()

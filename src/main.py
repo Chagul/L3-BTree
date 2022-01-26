@@ -50,10 +50,15 @@ def main():
                 ]
             )
         ]
-    ),3,2)
+    ),2,3)
     list = []
     btree.linearize(btree.root, list)
     print(list)
+    #print("Valid  ", btree.isValid())
+    print("Balanced ", btree.isBalanced())
+    print("RightNumberOfKeys", btree.rightNumberOfKeys(btree.root))
+    print("Linear ", btree.isLinear())
+
     print(btree.isBalanced())
 
 if __name__ == "__main__":

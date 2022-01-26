@@ -2,15 +2,15 @@ class BTree:
     
     def __init__(self, root, L, U):
         self.root = root
+        minKey = L - 1 
+        maxKey = L - 1
+        if minKey <= 0 or maxKey <= 0 or maxKey < minKey :
+            raise Exception("Invalid L or U value")
         self.nbKeysMin = L-1
         self.nbKeysMax = U-1
 
     def isValid(self):
-        if not self.isLinear():
-            return False
-        for Node in root.childrens:
-            None
-        return True
+        return self.isLinear() and self.isBalanced() and self.rightNumberOfKeys(self.root)
 
     def recherche(self, valueSearched):
         None
@@ -36,20 +36,19 @@ class BTree:
             return True
         firstHeight = self.getHeight(self.root.children[0])
         for i in (1, len(self.root.children)-1):
-            print(self.getHeight(self.root.children[i]))
             if firstHeight != self.getHeight(self.root.children[i]) :
                 return False
         return True
 
     def rightNumberOfKeys(self, node) : 
-        bool = len(node.keys) <= self.nbKeysMax and len(node.keys) >= nbKeysMin
+        bool = len(node.keys) <= self.nbKeysMax and len(node.keys) >= self.nbKeysMin
         if not bool :
             return False
         if node.isLeaf:
             return bool
         for i in range(len(node.keys) + 1):
-            self.rightNumberOfKeys(node.children[i])
-            right = len(node.keys) <= self.nbKeysMax and len(node.keys) >= nbKeysMin
+             bool = bool and self.rightNumberOfKeys(node.children[i])
+        return bool
 
     def linearize(self,node,list):
         if node.isLeaf:

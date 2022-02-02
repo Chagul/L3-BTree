@@ -53,8 +53,10 @@ class BTree:
     def isBalanced(self) :
         if len(self.root.children) == 0 :
             return True
+        if( len(self.root.children) != len(self.root.keys) + 1):
+            return False
         firstHeight = self.getHeight(self.root.children[0])
-        for i in (1, len(self.root.children)-1):
+        for i in range(len(self.root.children)):
             if firstHeight != self.getHeight(self.root.children[i]) :
                 return False
         return True
@@ -79,3 +81,4 @@ class BTree:
 
     def insert(self, node, valueToInsert):
         None
+

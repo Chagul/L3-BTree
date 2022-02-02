@@ -3,11 +3,11 @@ class BTree:
     def __init__(self, root, L, U):
         self.root = root
         minKey = L - 1 
-        maxKey = L - 1
+        maxKey = U - 1
         if minKey <= 0 or maxKey <= 0 or maxKey < minKey :
             raise Exception("Invalid L or U value")
-        self.nbKeysMin = L-1
-        self.nbKeysMax = U-1
+        self.nbKeysMin = minKey
+        self.nbKeysMax = maxKey
 
     def isValid(self):
         return self.isLinear() and self.isBalanced() and self.rightNumberOfKeys(self.root)
@@ -80,5 +80,30 @@ class BTree:
                 list.append(node.keys[i])
 
     def insert(self, node, valueToInsert):
-        None
+        #si la valeur est déjà dans l'arbre, ne pas insérer
+        if self.search(self.root, valueToInsert) :
+            return False
 
+        if valueToInsert < node.keys[0]:
+            return self.insert(node.children[0], valueToInsert)
+        if valueToInsert > node.keys[len(node.keys) -1 ]:
+            return self.insert(node.children[len(node.children)- 1], valueToInsert)
+
+        #si pas besoin d'éclatement
+        if len(node.keys) < node.nbKeysMax - 1 :
+            node.keys.append(valueToInsert)
+            return True
+        #si besoin d'éclatement
+        node.parent.keys.append(node.keys[len(node.keys)/2])
+        node.keys.remove(len(node.keys)/2)
+        node.keys.append(valueToInsert)
+        if len(node.parent.keys) >= node.parent.maxKey :
+            self.eclatement(node.parent)
+        return True
+
+    def eclatement(self, node) :
+        node.parent.keys.append(node.keys[len(node.keys)/2])
+        node.keys.remove(len(node.keys)/2)
+        node.keys.append(valueToInsert)
+        if len(node.keys) >= node.maxKey :
+            self.eclatement(node.parent)

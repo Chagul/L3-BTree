@@ -1,3 +1,5 @@
+import Node from Node
+
 class BTree:
     
     def __init__(self, root, L, U):
@@ -83,27 +85,32 @@ class BTree:
         #si la valeur est déjà dans l'arbre, ne pas insérer
         if self.search(self.root, valueToInsert) :
             return False
-
-        if valueToInsert < node.keys[0]:
-            return self.insert(node.children[0], valueToInsert)
-        if valueToInsert > node.keys[len(node.keys) -1 ]:
-            return self.insert(node.children[len(node.children)- 1], valueToInsert)
-
-        #si pas besoin d'éclatement
-        if len(node.keys) < node.nbKeysMax - 1 :
+        
+        if node.isLeaf :
+            #si pas besoin d'éclatement
+            if len(node.keys) < self.nbKeysMax - 1 :
+                node.keys.append(valueToInsert)
+                return True
+            #si besoin d'éclatement
+            node.parent.keys.append(node.keys[len(node.keys)//2])
+            node.keys.remove(node.keys[len(node.keys)//2])
             node.keys.append(valueToInsert)
-            return True
-        #si besoin d'éclatement
-        node.parent.keys.append(node.keys[len(node.keys)/2])
-        node.keys.remove(len(node.keys)/2)
-        node.keys.append(valueToInsert)
-        if len(node.parent.keys) >= node.parent.maxKey :
-            self.eclatement(node.parent)
+            if len(node.parent.keys) >= self.nbKeysMax :
+                self.eclatement(node.parent)
+
+        elif valueToInsert < node.keys[0]:
+            return self.insert(node.children[0], valueToInsert)
+        elif valueToInsert > node.keys[len(node.keys) -1 ]:
+            return self.insert(node.children[len(node.children)- 1], valueToInsert)
+        
         return True
 
     def eclatement(self, node) :
-        node.parent.keys.append(node.keys[len(node.keys)/2])
-        node.keys.remove(len(node.keys)/2)
-        node.keys.append(valueToInsert)
-        if len(node.keys) >= node.maxKey :
-            self.eclatement(node.parent)
+        if parent is None :
+            newRoot = self.root.keys[len(self.root.keys)//2]
+
+        else :
+            node.parent.keys.append(node.keys[len(node.keys)//2])
+            node.keys.remove(node.keys[len(node.keys)//2])
+            if len(node.parent.keys) >= self.nbKeysMax :
+                self.eclatement(node.parent)

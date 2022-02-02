@@ -6,6 +6,8 @@ class Node:
         self.children = children
         self.parent = None
         self.isLeaf = len(self.children) == 0
+        for child in children :
+            child.setParent(self)
 
     def setIsLeaf(self, isLeaf):
         self.isLeaf = isLeaf
@@ -19,3 +21,6 @@ class Node:
 
     def setChildren(self, newChildrens):
         self.children = newChildrens
+
+    def setParent(self, parent) :
+        self.parent = parent

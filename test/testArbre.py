@@ -1,5 +1,6 @@
 import unittest
 import sys
+import HtmlTestRunner 
 sys.path.append("../src")
 from BTree import BTree
 from Node import Node
@@ -58,10 +59,10 @@ class Test(unittest.TestCase):
             ]
         ),2,3)
 
-    def test010_isLinearReturnTrue(self):
+    def test_010_isLinearReturnTrue(self):
         self.assertTrue(self.btreeValid.isLinear())
 
-    def test011_isNotLinearReturnFalse(self):
+    def test_011_isNotLinearReturnFalse(self):
         bTreeNotLinear = BTree(Node(keys=[7,22],
                                         children=[
                                                 Node(keys=[4],children=[]),
@@ -72,10 +73,21 @@ class Test(unittest.TestCase):
             ),2,3)
         self.assertFalse(bTreeNotLinear.isLinear())
 
-    def test020_isBalancedReturnTrue(self):
+    def test_020_isBalancedReturnTrue(self):
         self.assertTrue(self.btreeValid.isBalanced())
 
-    def test021_isNotBalancedReturnFalse(self):
+    #       7,22
+    #      /
+    #     4
+    #
+    #            |7,                 22|
+    #          /       |               \  
+    #        |4|     |11|            |30,  34| 
+    #       /  \      /  \           /   |   \
+    #      |2| |5| |8,9|  |12,16||26,28||32|  |36|
+    #                    /  
+    #                  14
+    def test_021_isNotBalancedReturnFalse(self):
         bTreeNotBalanced = BTree(Node(keys=[7,22],
                                         children=[
                 Node(
@@ -138,19 +150,34 @@ class Test(unittest.TestCase):
         ),2,3)
         self.assertFalse(bTreeNotBalanced.isBalanced())
 
-    def test030_rightNumberOfKeysReturnTrue(self):
+    def test_030_rightNumberOfKeysReturnTrue(self):
         self.assertTrue(self.btreeValid.rightNumberOfKeys(self.btreeValid.root))
 
-    def test_031_wrongNumberOfKeysReturnFalse(self):
-        None
+    def test_031_wrongNumberOfKeysRaiseException(self):
+        #If L value is too small
+        self.assertRaises(Exception,BTree,Node(keys=[1,2], children=[]),0,2)
+        #If L value is inferior in comparaison of U value 
+        self.assertRaises(Exception,BTree,Node(keys=[1,2], children=[]),3,2)
+        #If U value is too small
+        self.assertRaises(Exception,BTree,Node(keys=[1,2], children=[]),1,2)
+    
+    def test_040_getHeightJustRoot(self):
+        btreeRoot = BTree(Node(keys=[1],children=[]),2,3)
+        self.assertEqual(0,btreeRoot.getHeight(btreeRoot.root))
+    
+    def test_041_getHeight(self):
+        self.assertEqual(2,self.btreeValid.getHeight(self.btreeValid.root))
 
-    def test_040_isValidReturnTrue(self):
-        None 
+    def test_050_isValidReturnTrue(self):
+        self.assertTrue(self.btreeValid.isValid())
 
-    def test50_applatiFunctionReturnTheSameList(self):
+    def test_60_applatiFunctionReturnTheSameList(self):
         list = []
         self.btreeValid.linearize(self.btreeValid.root, list)
         self.assertEqual(list, self.arrayValues)
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(
+            report_name="testArbre",
+            output="./ResultatTest",
+            combine_reports=True))

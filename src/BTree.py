@@ -1,4 +1,4 @@
-import Node from Node
+from Node import Node
 
 class BTree:
     
@@ -47,10 +47,15 @@ class BTree:
         return True
 
     def getHeight(self, node) :
-        if not node.isLeaf :
-            return 1 + self.getHeight(node.children[0])
-        else :
+        max = 0
+        tmp = 0
+        if node.isLeaf:
             return 0
+        for child in node.children:
+            tmp = 1 + self.getHeight(child)
+            if tmp > max:
+                max = tmp
+        return max
 
     def isBalanced(self) :
         if len(self.root.children) == 0 :
@@ -58,8 +63,8 @@ class BTree:
         if( len(self.root.children) != len(self.root.keys) + 1):
             return False
         firstHeight = self.getHeight(self.root.children[0])
-        for i in range(len(self.root.children)):
-            if firstHeight != self.getHeight(self.root.children[i]) :
+        for child in self.root.children:
+            if firstHeight != self.getHeight(child) :
                 return False
         return True
 

@@ -1,4 +1,4 @@
-import Node from Node
+from Node import Node
 
 class BTree:
     
@@ -96,7 +96,7 @@ class BTree:
             node.keys.remove(node.keys[len(node.keys)//2])
             node.keys.append(valueToInsert)
             if len(node.parent.keys) >= self.nbKeysMax :
-                self.eclatement(node.parent)
+                self.split(node.parent)
 
         elif valueToInsert < node.keys[0]:
             return self.insert(node.children[0], valueToInsert)
@@ -105,12 +105,32 @@ class BTree:
         
         return True
 
-    def eclatement(self, node) :
-        if parent is None :
-            newRoot = self.root.keys[len(self.root.keys)//2]
+    def split(self, node) :
+        if node.parent is None :
+            keyInNewRoot = self.root.keys[len(self.root.keys)//2]
+
+            keysNewChildLeft = []
+            for i in range(len(self.root.keys)//2) :
+                keysNewChildLeft.append(self.root.keys[i])
+            keysNewChildRight = []
+            for i in range(len(self.root.keys)//2, len(self.root.keys)) :
+                keysNewChildRight.append(self.root.keys[i])
+            
+            newChildLeft = Node(keysNewChildLeft, [])
+            newChildRight = Node(keysNewChildRight, [])
+            for i in range(len(self.root.children)) :
+                if(i < len(self.root.keys)//2) :
+                    newChildLeft.children.append(self.root.children[i])
+                    self.root.children[i].parent = newChildLeft
+                else :
+                    newChildRight.children.append(self.root.children[i])
+                    self.root.children[i].parent = newChildRight
+
+            newRoot = Node([keyInNewRoot], [newChildLeft, newChildRight])
+            self.root = newRoot
 
         else :
             node.parent.keys.append(node.keys[len(node.keys)//2])
             node.keys.remove(node.keys[len(node.keys)//2])
             if len(node.parent.keys) >= self.nbKeysMax :
-                self.eclatement(node.parent)
+                self.split(node.parent)

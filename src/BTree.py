@@ -15,11 +15,12 @@ class BTree:
         return self.isLinear() and self.isBalanced() and self.rightNumberOfKeys(self.root)
 
     def search(self, node, valueSearched):
+        
         # si dans noeud courant
         if valueSearched in node.keys :
             return True
         #si il n'y a plus d'enfant, la valeur n'est pas là
-        if len(node.children) == 0:
+        if len(node.children) == 0 or len(node.keys) <= 0 :
             return False
         #partie gauche de la premiere cléf
         if(valueSearched < node.keys[0]):
@@ -93,49 +94,54 @@ class BTree:
         
         if node.isLeaf :
             #si pas besoin d'éclatement
-            if len(node.keys) < self.nbKeysMax - 1 :
+            if len(node.keys) < self.nbKeysMax :
                 node.keys.append(valueToInsert)
                 return True
             #si besoin d'éclatement
-            node.parent.keys.append(node.keys[len(node.keys)//2])
-            node.keys.remove(node.keys[len(node.keys)//2])
-            node.keys.append(valueToInsert)
-            if len(node.parent.keys) >= self.nbKeysMax :
-                self.split(node.parent)
+            self.split(node)
+            return self.insert(node, valueToInsert)
 
         elif valueToInsert < node.keys[0]:
             return self.insert(node.children[0], valueToInsert)
         elif valueToInsert > node.keys[len(node.keys) -1 ]:
             return self.insert(node.children[len(node.children)- 1], valueToInsert)
-        
+        else:
+            for i in range(1,len(node.keys)):
+                if valueToInsert < node.keys[i]:
+                    return self.insert(node.children[i], valueToInsert)
+
+
         return True
 
     def split(self, node) :
-        if node.parent is None :
-            keyInNewRoot = self.root.keys[len(self.root.keys)//2]
-
-            keysNewChildLeft = []
-            for i in range(len(self.root.keys)//2) :
-                keysNewChildLeft.append(self.root.keys[i])
-            keysNewChildRight = []
-            for i in range(len(self.root.keys)//2, len(self.root.keys)) :
-                keysNewChildRight.append(self.root.keys[i])
-            
-            newChildLeft = Node(keysNewChildLeft, [])
-            newChildRight = Node(keysNewChildRight, [])
-            for i in range(len(self.root.children)) :
-                if(i < len(self.root.keys)//2) :
-                    newChildLeft.children.append(self.root.children[i])
-                    self.root.children[i].parent = newChildLeft
-                else :
-                    newChildRight.children.append(self.root.children[i])
-                    self.root.children[i].parent = newChildRight
-
-            newRoot = Node([keyInNewRoot], [newChildLeft, newChildRight])
+        middle = len(node.keys)//2
+        keyInParent = node.keys[middle]
+        keysNewChildLeft = []
+        keysNewChildRight = []
+        
+        for i in range(middle) :
+            if(i < middle):
+                keysNewChildLeft.append(node.keys[i])
+            else: 
+                keysNewChildRight.append(node.keys[i])
+        
+        newChildLeft = Node(keysNewChildLeft, [])
+        newChildRight = Node(keysNewChildRight, [])
+        
+        for i in range(len(node.children)) :
+            if(i < middle) :
+                newChildLeft.children.append(node.children[i])
+                node.children[i].parent = newChildLeft
+            else :
+                newChildRight.children.append(node.children[i])
+                node.children[i].parent = newChildRight
+        if(node.parent is None):
+            newRoot = Node([keyInParent], [newChildLeft, newChildRight])
             self.root = newRoot
-
         else :
-            node.parent.keys.append(node.keys[len(node.keys)//2])
-            node.keys.remove(node.keys[len(node.keys)//2])
+            print(node.children[0])
+            print(node.children[1])
+            node.parent.keys.append(node.keys[middle])
+            node.keys.remove(node.keys[middle])
             if len(node.parent.keys) >= self.nbKeysMax :
                 self.split(node.parent)

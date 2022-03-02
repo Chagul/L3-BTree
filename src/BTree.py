@@ -80,9 +80,11 @@ class BTree:
         return bool
 
     def linearize(self,node,list):
+        #Si c'est une feuille, on rajoute toute les clefs
         if node.isLeaf:
             return list.extend(node.keys) 
-        for i in range(len(node.keys) + 1):
+        #Pour chaque enfant, on rappelle la fonction
+        for i in range(len(node.children)):
             self.linearize(node.children[i],list)
             if i != len(node.keys):
                 list.append(node.keys[i])
@@ -93,8 +95,11 @@ class BTree:
             return False
         if node.isLeaf :
             #si pas besoin d'éclatement
-            if len(node.keys) < self.nbKeysMax :
-                node.keys.append(valueToInsert)
+            indexToInsert = 0
+            while indexToInsert < len(node.keys) and node.keys[indexToInsert] < valueToInsert:
+                indexToInsert = indexToInsert + 1
+            node.keys.insert(indexToInsert,valueToInsert)
+            if len(node.keys) <= self.nbKeysMax :
                 return True
             #si besoin d'éclatement
             self.split(node)
@@ -113,10 +118,12 @@ class BTree:
         return True
 
     def split(self, node) :
+        print("SPLIT")
         middle = len(node.keys)//2
         keyInParent = node.keys[middle]
         keysNewChildLeft = []
         keysNewChildRight = []
+        node.keys.remove(keyInParent)
         
         #On parcours le noeud pour répartir les clefs entre deux fils
         for i in range(len(node.keys)) :
@@ -132,21 +139,34 @@ class BTree:
         #Pour chaque enfant du noeud en cours, on attribue ses anciens enfants sous les nouveaux enfants
         for i in range(len(node.children)) :
             if(i < middle) :
-                newChildLeft.children.append(node.children[i])
                 node.children[i].parent = newChildLeft
+                newChildLeft.children.append(node.children[i])
             else :
-                newChildRight.children.append(node.children[i])
                 node.children[i].parent = newChildRight
+                newChildRight.children.append(node.children[i])
         #Si le noeud en cours est la racine, on créer une nouvelle racine
         if(node.parent is None):
             newRoot = Node([keyInParent], [newChildLeft, newChildRight])
             self.root = newRoot
         #Sinon on ajoute la clef du milieu au parent du noeud en cours, on l'enleve du noeud en cours
         else :
-            # print(node.children[0])
-            # print(node.children[1])
-            node.parent.keys.append(keyInParent)
-            node.keys.remove(keyInParent)
+            indexToInsert = 0
+            while indexToInsert < len(node.parent.keys) and node.parent.keys[indexToInsert] < keyInParent:
+                indexToInsert = indexToInsert + 1
+            node.parent.keys.insert(indexToInsert,keyInParent)
             #Si l'ajout de notre clef depasse le nombre de clef max, on split le parent
             if len(node.parent.keys) > self.nbKeysMax :
                 self.split(node.parent)
+            node.parent.children.insert(indexToInsert,newChildLeft)
+            node.parent.children[indexToInsert + 1] = newChildRight
+
+    #experimental
+    def printArbre(self,node):
+        if node == self.root:
+            print(node.keys)
+        for child in node.children:
+            print(child.keys, end ="\t")
+        print()
+        for child in node.children:
+            self.printArbre(child)
+

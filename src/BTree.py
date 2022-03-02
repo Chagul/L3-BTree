@@ -160,6 +160,14 @@ class BTree:
             node.parent.children.insert(indexToInsert,newChildLeft)
             node.parent.children[indexToInsert + 1] = newChildRight
 
+        
+    def insertList(self, values) :
+        for val in values :
+            if(self.insert(self.root, val)) :
+                print("Value ", val, " inserted.")
+            else :
+                print("Value ", val, " already in the tree.")
+
     #experimental
     def printArbre(self,node):
         if node == self.root:

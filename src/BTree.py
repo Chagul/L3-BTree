@@ -89,9 +89,10 @@ class BTree:
             if i != len(node.keys):
                 list.append(node.keys[i])
 
-    def insert(self, node, valueToInsert):
+    def insert(self, node, valueToInsert,searchDone):
         #si la valeur est déjà dans l'arbre, ne pas insérer
-        if self.search(self.root, valueToInsert) :
+        if searchDone == False and self.search(self.root, valueToInsert) :
+            searchDone = True
             return False
         if node.isLeaf :
             #si pas besoin d'éclatement
@@ -103,18 +104,18 @@ class BTree:
                 return True
             #si besoin d'éclatement
             self.split(node)
-            return self.insert(node, valueToInsert)
+            return self.insert(node, valueToInsert,searchDone)
         #Si la valeur à inserer est inférieur à la clef la plus à gauche du noeud en cours
         elif valueToInsert < node.keys[0]:
-            return self.insert(node.children[0], valueToInsert)
+            return self.insert(node.children[0], valueToInsert,searchDone)
         #Si la valeur à inserer est inférieur à la clef la plus à droite du noeud en cours
         elif valueToInsert > node.keys[len(node.keys) -1 ]:
-            return self.insert(node.children[len(node.children)- 1], valueToInsert)
+            return self.insert(node.children[len(node.children)- 1], valueToInsert,searchDone)
         #Sinon on parcours les clefs pour trouver dans quel enfant aller par rapport aux clefs du noeud en cours
         else:
             for i in range(1,len(node.keys)):
                 if valueToInsert < node.keys[i]:
-                    return self.insert(node.children[i], valueToInsert)
+                    return self.insert(node.children[i], valueToInsert,searchDone)
         return True
 
     def split(self, node) :
@@ -161,12 +162,19 @@ class BTree:
             node.parent.children[indexToInsert + 1] = newChildRight
 
     #experimental
-    def printArbre(self,node):
+    def printArbre(self,node,depth):
         if node == self.root:
-            print(node.keys)
+            print("\t",node.keys)
         for child in node.children:
-            print(child.keys, end ="\t")
+            print('\t'* depth, child.keys, end ="\t")
         print()
         for child in node.children:
-            self.printArbre(child)
+            self.printArbre(child,depth = depth + 1)
 
+    def deleteKey(self,node,valueToDelete,searchDone):
+        if node.isLeaf:
+            node.key.remove(valueToDelete)
+            return 
+        if searchDone == False and search(self.root, valueToDelete):
+            searchDone = True
+            return False

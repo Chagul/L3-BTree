@@ -164,7 +164,7 @@ class BTree:
         
     def insertList(self, values) :
         for val in values :
-            if(self.insert(self.root, val)) :
+            if(self.insert(self.root, val, False)) :
                 print("Value ", val, " inserted.")
             else :
                 print("Value ", val, " already in the tree.")

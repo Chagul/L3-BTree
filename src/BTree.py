@@ -91,7 +91,6 @@ class BTree:
         #si la valeur est déjà dans l'arbre, ne pas insérer
         if self.search(self.root, valueToInsert) :
             return False
-        
         if node.isLeaf :
             #si pas besoin d'éclatement
             if len(node.keys) < self.nbKeysMax :
@@ -100,17 +99,17 @@ class BTree:
             #si besoin d'éclatement
             self.split(node)
             return self.insert(node, valueToInsert)
-
+        #Si la valeur à inserer est inférieur à la clef la plus à gauche du noeud en cours
         elif valueToInsert < node.keys[0]:
             return self.insert(node.children[0], valueToInsert)
+        #Si la valeur à inserer est inférieur à la clef la plus à droite du noeud en cours
         elif valueToInsert > node.keys[len(node.keys) -1 ]:
             return self.insert(node.children[len(node.children)- 1], valueToInsert)
+        #Sinon on parcours les clefs pour trouver dans quel enfant aller par rapport aux clefs du noeud en cours
         else:
             for i in range(1,len(node.keys)):
                 if valueToInsert < node.keys[i]:
                     return self.insert(node.children[i], valueToInsert)
-
-
         return True
 
     def split(self, node) :
@@ -119,15 +118,18 @@ class BTree:
         keysNewChildLeft = []
         keysNewChildRight = []
         
-        for i in range(middle) :
+        #On parcours le noeud pour répartir les clefs entre deux fils
+        for i in range(len(node.keys)) :
             if(i < middle):
                 keysNewChildLeft.append(node.keys[i])
             else: 
                 keysNewChildRight.append(node.keys[i])
         
+        #On créer les deux fils
         newChildLeft = Node(keysNewChildLeft, [])
         newChildRight = Node(keysNewChildRight, [])
         
+        #Pour chaque enfant du noeud en cours, on attribue ses anciens enfants sous les nouveaux enfants
         for i in range(len(node.children)) :
             if(i < middle) :
                 newChildLeft.children.append(node.children[i])
@@ -135,13 +137,16 @@ class BTree:
             else :
                 newChildRight.children.append(node.children[i])
                 node.children[i].parent = newChildRight
+        #Si le noeud en cours est la racine, on créer une nouvelle racine
         if(node.parent is None):
             newRoot = Node([keyInParent], [newChildLeft, newChildRight])
             self.root = newRoot
+        #Sinon on ajoute la clef du milieu au parent du noeud en cours, on l'enleve du noeud en cours
         else :
-            print(node.children[0])
-            print(node.children[1])
-            node.parent.keys.append(node.keys[middle])
-            node.keys.remove(node.keys[middle])
-            if len(node.parent.keys) >= self.nbKeysMax :
+            # print(node.children[0])
+            # print(node.children[1])
+            node.parent.keys.append(keyInParent)
+            node.keys.remove(keyInParent)
+            #Si l'ajout de notre clef depasse le nombre de clef max, on split le parent
+            if len(node.parent.keys) > self.nbKeysMax :
                 self.split(node.parent)

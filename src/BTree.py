@@ -115,7 +115,6 @@ class BTree:
             for i in range(1,len(node.keys)):
                 if valueToInsert < node.keys[i]:
                     return self.insert(node.children[i], valueToInsert)
-        print("TRUE")
         return True
 
     def split(self, node) :
@@ -162,11 +161,12 @@ class BTree:
 
         
     def insertList(self, values) :
+        areInserted = True
         for val in values :
-            if(self.insert(self.root, val)) :
-                print("Value ", val, " inserted.")
-            else :
-                print("Value ", val, " already in the tree.")
+            inserted = self.insert(self.root, val)
+            if not inserted :
+                areInserted = False
+        return areInserted
 
     #experimental
     def printArbre(self,node,depth):
@@ -178,10 +178,15 @@ class BTree:
         for child in node.children:
             self.printArbre(child,depth = depth + 1)
 
-    def deleteKey(self,node,valueToDelete,searchDone):
-        if node.isLeaf:
-            node.key.remove(valueToDelete)
-            return 
-        if searchDone == False and search(self.root, valueToDelete):
-            searchDone = True
+    def deleteKey(self,node,valueToDelete):
+        #recherche la valeur dans l'arbre, rien a faire si elle n'est pas dedans
+        if not search(self.root, valueToDelete):
             return False
+        if node.isLeaf:
+            #pas besoin d'eclatement
+            if (len(node.keys) - 1) > self.nbKeysMin : 
+                node.keys.remove(valueToDelete)
+            #eclatement du noeud
+            else :
+                None
+        return True

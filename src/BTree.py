@@ -89,10 +89,9 @@ class BTree:
             if i != len(node.keys):
                 list.append(node.keys[i])
 
-    def insert(self, node, valueToInsert,searchDone):
+    def insert(self, node, valueToInsert):
         #si la valeur est déjà dans l'arbre, ne pas insérer
-        if searchDone == False and self.search(self.root, valueToInsert) :
-            searchDone = True
+        if self.search(self.root, valueToInsert) :
             return False
         if node.isLeaf :
             #si pas besoin d'éclatement
@@ -104,22 +103,22 @@ class BTree:
                 return True
             #si besoin d'éclatement
             self.split(node)
-            return self.insert(node, valueToInsert,searchDone)
+            return True
         #Si la valeur à inserer est inférieur à la clef la plus à gauche du noeud en cours
         elif valueToInsert < node.keys[0]:
-            return self.insert(node.children[0], valueToInsert,searchDone)
+            return self.insert(node.children[0], valueToInsert)
         #Si la valeur à inserer est inférieur à la clef la plus à droite du noeud en cours
         elif valueToInsert > node.keys[len(node.keys) -1 ]:
-            return self.insert(node.children[len(node.children)- 1], valueToInsert,searchDone)
+            return self.insert(node.children[len(node.children)- 1], valueToInsert)
         #Sinon on parcours les clefs pour trouver dans quel enfant aller par rapport aux clefs du noeud en cours
         else:
             for i in range(1,len(node.keys)):
                 if valueToInsert < node.keys[i]:
-                    return self.insert(node.children[i], valueToInsert,searchDone)
+                    return self.insert(node.children[i], valueToInsert)
+        print("TRUE")
         return True
 
     def split(self, node) :
-        print("SPLIT")
         middle = len(node.keys)//2
         keyInParent = node.keys[middle]
         keysNewChildLeft = []
@@ -164,7 +163,7 @@ class BTree:
         
     def insertList(self, values) :
         for val in values :
-            if(self.insert(self.root, val, False)) :
+            if(self.insert(self.root, val)) :
                 print("Value ", val, " inserted.")
             else :
                 print("Value ", val, " already in the tree.")

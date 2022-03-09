@@ -176,8 +176,100 @@ class Test(unittest.TestCase):
         self.btreeValid.linearize(self.btreeValid.root, list)
         self.assertEqual(list, self.arrayValues)
 
+    def test_070_searchReturnTrue(self):
+        self.assertTrue(self.btreeValid.search(self.btreeValid.root,4))
+        self.assertTrue(self.btreeValid.search(self.btreeValid.root,7))
+        self.assertTrue(self.btreeValid.search(self.btreeValid.root,12))
+        self.assertTrue(self.btreeValid.search(self.btreeValid.root,30))
+        self.assertTrue(self.btreeValid.search(self.btreeValid.root,36))
+
+    def test_071_searchReturnFalseWhenTheValueIsNotInTheTree(self):
+        self.assertFalse(self.btreeValid.search(self.btreeValid.root, -1))
+        self.assertFalse(self.btreeValid.search(self.btreeValid.root, 40))
+
+    def test_080_insertionWithoutSplitIsCorrect(self):
+        listBefore = []
+        valueToInsert = 3
+        self.btreeValid.linearize(self.btreeValid.root, listBefore)
+        listBefore.append(valueToInsert)
+        listBefore.sort()
+        self.assertTrue(self.btreeValid.insert(self.btreeValid.root, valueToInsert))
+        listAfter = []
+        self.btreeValid.linearize(self.btreeValid.root, listAfter)
+        self.assertEqual(listBefore, listAfter )
+        self.assertTrue(self.btreeValid.isValid())
+    
+    def test_0810_insertValueAlreadyInTreeReturnFalse(self):
+        valueToInsert = 2
+        self.assertFalse(self.btreeValid.insert(self.btreeValid.root, valueToInsert))
+
+    def test_0811_insertValueAlreadyInTreeDoesntAppendToList(self):
+        valueToInsert = 2
+        self.btreeValid.insert(self.btreeValid.root, valueToInsert)
+        listAfterInsertion = []
+        self.btreeValid.linearize(self.btreeValid.root, listAfterInsertion)
+        cptValueToInsert = 0
+        for value in listAfterInsertion:
+            if value == valueToInsert:
+                cptValueToInsert = cptValueToInsert + 1
+        self.assertEqual(1,cptValueToInsert)
+        
+    def test_0812_insertValueAlreadyInTreeDoesntChangeTree(self):
+        listAfterInsertion = []
+        valueToInsert = 2
+        self.btreeValid.insert(self.btreeValid.root, valueToInsert)
+        self.btreeValid.linearize(self.btreeValid.root, listAfterInsertion)
+        self.assertTrue(self.btreeValid.isValid())
+    
+    def test_0820_insertListOfValuesThatAreNotInTheTree(self):
+        listOfValuesToInsert = [1,3,6,14]
+        listBeforeInsertion = []
+        self.btreeValid.linearize(self.btreeValid.root, listBeforeInsertion)
+        listBeforeInsertion.extend(listOfValuesToInsert)
+        listBeforeInsertion.sort()
+        listAfterInsertion = []
+        self.btreeValid.insertList(listOfValuesToInsert)
+        self.btreeValid.linearize(self.btreeValid.root, listAfterInsertion)
+        self.assertEqual(listBeforeInsertion, listAfterInsertion)
+
+    def test_0821_insertListOfValuesThatAreNotInTheTreeReturnTrue(self):
+        listOfValuesToInsert = [1,3,6,14]
+        listBeforeInsertion = []
+        self.btreeValid.linearize(self.btreeValid.root, listBeforeInsertion)
+        listBeforeInsertion.extend(listOfValuesToInsert)
+        listBeforeInsertion.sort()
+        self.assertTrue(self.btreeValid.insertList(listOfValuesToInsert))
+
+    def test_0822_insertListOfValueContainingValuesThatAreAlreadyInTreeRetunFalseButStillInsertValue(self):
+        valueAlreadyInTree =  4
+        listOfValuesToInsert = [1,3,valueAlreadyInTree,14]
+        listBeforeInsertion = []
+        self.btreeValid.linearize(self.btreeValid.root, listBeforeInsertion)
+        listBeforeInsertion.extend(listOfValuesToInsert)
+        listBeforeInsertion.sort()
+        listBeforeInsertion.remove(valueAlreadyInTree)
+        listAfterInsertion = []
+        self.assertFalse(self.btreeValid.insertList(listOfValuesToInsert))
+        self.btreeValid.linearize(self.btreeValid.root,listAfterInsertion)
+        self.assertEqual(listBeforeInsertion,listAfterInsertion)
+
+    def test_0823_insertListOfValuesThatAreAllAlreadyInTreeReturnFalseAndDoesntChangeTheTree(self):
+        listOfValuesToInsert = [2,4,7,22]
+        listBeforeInsertion = []
+        self.btreeValid.linearize(self.btreeValid.root, listBeforeInsertion)
+        listAfterInsertion = []
+        self.assertFalse(self.btreeValid.insertList(listOfValuesToInsert))
+        self.btreeValid.linearize(self.btreeValid.root,listAfterInsertion)
+        self.assertEqual(listBeforeInsertion,listAfterInsertion)
+
+
+
+        
+
+
 if __name__ == "__main__":
-    unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(
-            report_name="testArbre",
-            output="./ResultatTest",
-            combine_reports=True))
+    unittest.main()
+    # unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(
+            # report_name="testArbre",
+            # output="ResultatTest",
+            # combine_reports=True))

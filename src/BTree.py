@@ -1,8 +1,24 @@
 from Node import Node
 
 class BTree:
+    """
+    Cette classe permet de modéliser les arbres-B.
+    Elle comporte 3 attributs :
+    root : la racine de l'arbre-B
+    nbKeysMin : le nombre minimum de clefs contenus dans chaque noeud de l'arbre
+    nbKeysMax : le nombre maximum de clefs contenus dans chaque noeud de l'arbre
+    """
     
     def __init__(self, root, L, U):
+        """
+        Cette méthode est le constructeur de la classe. Il permet d'instancier un arbre-B.
+        Elle demande 3 paramètres :
+        root : le noeud racine pour l'arbre que l'on souhaite créer
+        L : le nombre de fils minimum pour chaque noeud de l'arbre
+        U : le nombre de fils maximum pour chaque noeud de l'arbre
+        Une exception est levée si les valeurs de L et U sont incohérentes entre elles.
+        """
+
         self.root = root
         minKey = L - 1 
         maxKey = U - 1
@@ -12,9 +28,20 @@ class BTree:
         self.nbKeysMax = maxKey
 
     def isValid(self):
+        """
+        Cette méthode permet de vérifier si un arbre est valide en vérifiant 3 points :
+        Est-il linéaire ?
+        Est-il équilibré ?
+        Le nombre de clés dans ses noeuds respecte-il bien les contraintes imposées lors de l'instanciation de l'arbre ?
+        Elle renvoie True si toutes les conditions sont vérifiées et que l'arbre et valide et False si au moins l'une de ces trois conditions n'est pas respectée.
+        """
         return self.isLinear() and self.isBalanced() and self.rightNumberOfKeys(self.root)
 
     def search(self, node, valueSearched):
+        """
+        Cette méthode permet de rechercher une valeur dans l'arbre en le parcourant récursivement.
+        Elle renvoie True si la valeur est trouvée dans l'arbre et False sinon.
+        """
         
         # si dans noeud courant
         if valueSearched in node.keys :
@@ -38,6 +65,11 @@ class BTree:
                 return self.search(node.children[i+1], valueSearched)
 
     def isLinear(self):
+        """
+        Cette méthode permet de vérifier que l'arbre est linéaire. 
+        C'est à dire que lorsque l'on transforme l'arbre en une liste, cette dernière doit être triée par ordre croissant.
+        """
+
         list = []
         self.linearize(self.root,list)
         for i in range(len(list) - 1):
@@ -48,6 +80,9 @@ class BTree:
         return True
 
     def getHeight(self, node) :
+        """
+        Cette méthode calcule et renvoie la hauteur de l'arbre récursivement.
+        """
         max = 0
         tmp = 0
         if node.isLeaf:
@@ -59,6 +94,9 @@ class BTree:
         return max
 
     def isBalanced(self) :
+        """
+        Cette méthode permet de vérifier que l'arbre-B est équilibré en le parcourant et en vérifiant que toutes les branches font la même hauteur.
+        """
         if len(self.root.children) == 0 :
             return True
         if( len(self.root.children) != len(self.root.keys) + 1):
@@ -70,6 +108,9 @@ class BTree:
         return True
 
     def rightNumberOfKeys(self, node) : 
+        """
+        Cette méthode vérifie que les contraintes minimum et maximum du nombre de clés dans chaque noeud sont vérifiées en parcourant l'arbre récursivement.
+        """
         bool = len(node.keys) <= self.nbKeysMax and len(node.keys) >= self.nbKeysMin
         if not bool :
             return False
@@ -80,6 +121,9 @@ class BTree:
         return bool
 
     def linearize(self,node,list):
+        """
+        Cette méthode permet de linéariser l'arbre-B en le parcourant de gauche à droite depuis la racine.
+        """
         #Si c'est une feuille, on rajoute toute les clefs
         if node.isLeaf:
             return list.extend(node.keys) 

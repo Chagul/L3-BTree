@@ -180,13 +180,102 @@ class BTree:
 
     def deleteKey(self,node,valueToDelete):
         #recherche la valeur dans l'arbre, rien a faire si elle n'est pas dedans
-        if not search(self.root, valueToDelete):
+        if not self.search(self.root, valueToDelete):
             return False
+        lenAfterRemoval = len(node.keys) - 1
+        #Si c'est une feuille et qu'on peut supprimer sans passer en dessous du minimum, on a juste à supprimer, pas d'autre update necessaire
         if node.isLeaf:
-            #pas besoin d'eclatement
-            if (len(node.keys) - 1) > self.nbKeysMin : 
-                node.keys.remove(valueToDelete)
-            #eclatement du noeud
-            else :
-                None
+            node.keys.remove(valueToDelete)
+            if lenAfterRemoval >= self.nbKeysMin :
+                return
+            else:
+                self.leafUpdate(node.parent, node)
+                return
+        
+        if valueToDelete in node.keys:
+            print("not in leaf")
+            return
+        #Si la valeur à supprimer est inférieur à la clef la plus à gauche du noeud en cours
+        elif valueToDelete < node.keys[0]:
+            return self.deleteKey(node.children[0], valueToDelete)
+        #Si la valeur à inserer est inférieur à la clef la plus à droite du noeud en cours
+        elif valueToDelete > node.keys[len(node.keys) -1 ]:
+            return self.deleteKey(node.children[len(node.children)- 1], valueToDelete)
+        #Sinon on parcours les clefs pour trouver dans quel enfant aller par rapport aux clefs du noeud en cours
+        else:
+            for i in range(1,len(node.keys)):
+                if valueToDelete < node.keys[i]:
+                    return self.deleteKey(node.children[i], valueToDelete)
+
+        #if lenAfterRemoval == 0:
+        #    node.parent.children.remove(node)
+        #else:
+        #    None
         return True
+
+    def leafUpdate(self, parent, leafUpdated):
+        print("looking at ", parent.keys)
+        indexNodeUpdatedInParent = 0
+        while indexNodeUpdatedInParent < len(parent.children) and parent.children[indexNodeUpdatedInParent] != leafUpdated:
+            indexNodeUpdatedInParent = indexNodeUpdatedInParent + 1
+        
+        leftNeighbour = parent.children[indexNodeUpdatedInParent - 1]
+        rightNeigbour = parent.children[indexNodeUpdatedInParent + 1]
+        print("index : ", indexNodeUpdatedInParent)
+        ##Si on  peut prendre à gauche
+        if indexNodeUpdatedInParent == 0:
+            if len(rightNeigbour) > self.nbKeysMin:       
+                tmpKeyFromParent = parent.keys[indexNodeUpdatedInParent]
+                keyFromLeftNeighbour = takeLastKeyOfAndRemoveIt(leftNeighbour)
+                parent.keys.insert(indexNodeUpdatedInParent, keyFromLeftNeighbour)
+                leafUpdated.insert(tmpKeyFromParent)
+                leafUpdated.keys.sort()
+            else:
+                tmpListOfKeys = leafUpdated.keys
+                parent.children.pop(0)
+                
+        elif indexNodeUpdatedInParent == len(parent.keys):
+
+        # if indexNodeUpdatedInParent != 0 and len(leftNeighbour.keys) > self.nbKeysMin:
+        #     tmpKeyFromParent = parent.keys[indexNodeUpdatedInParent - 1]
+        #     keyFromLeftNeighbour = takeLastKeyOfAndRemoveIt(leftNeighbour)
+        #     parent.keys.insert(indexNodeUpdatedInParent - 1, keyFromLeftNeighbour)
+        #     leafUpdated.insert(tmpKeyFromParent)
+        #     leafUpdated.keys.sort()
+        
+        # ##Si on peut prendre à droite
+        # elif indexNodeUpdatedInParent != len(parent.keys) and len(rightNeigbour.keys) > self.nbKeysMin:
+        #     tmpKeyFromParent = parent.keys[indexNodeUpdatedInParent + 1]
+        #     keyFromRightNeigbour = self.takeFirstKeyOfAndRemoveIt(rightNeigbour)
+        #     parent.keys.insert(indexNodeUpdatedInParent + 1, keyFromRightNeigbour)
+        #     leafUpdated.keys.append(tmpKeyFromParent)
+        #     leafUpdated.keys.sort()
+        #     print(leafUpdated.keys)
+        #     ##Sinon
+        # else:
+        #     if indexNodeUpdatedInParent != 0:
+        #         child = parent.children[indexNodeUpdatedInParent - 1]
+        #         child.keys.append(parent.keys[indexNodeUpdatedInParent - 1])
+        #         parent.keys.pop(indexNodeUpdatedInParent - 1)
+        #     else:
+        #         child = parent.children[indexNodeUpdatedInParent + 1]
+        #         child.keys.append(parent.keys[indexNodeUpdatedInParent])
+        #         parent.keys.pop(indexNodeUpdatedInParent)
+        #     print(child.keys)
+        #     child.keys.extend(leafUpdated.keys)
+        #     child.keys.sort()
+        #     print(child.keys)
+
+        #     parent.children.remove(leafUpdated)
+
+
+
+    def takeLastKeyOfAndRemoveIt(self, node):
+        tmpKey = node.keys[len(node.keys) - 1]
+        node.keys.pop(len(node.keys) - 1) 
+        return tmpKey
+
+    def takeFirstKeyOfAndRemoveIt(self, node):
+        tmpKey = node.keys[0]
+        node.keys.remove(tmpKey)
+        return tmpKey

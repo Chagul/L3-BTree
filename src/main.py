@@ -57,12 +57,33 @@ def main():
     #for i in range(51) :
     #    print(i, ", ", btree.search(btree.root, i))
     list = []
+    btree.linearize(btree.root, list)
+    print("search avant insert:",btree.search(btree.root,14))
+    print(list)
+    btree.insert(btree.root,14)
+    print("search apres insert:" ,btree.search(btree.root,14))
+
+    print("------")
+    btree.insert(btree.root,1)
+    print("------")
+    # print("------")
+    # btree.printArbre(btree.root,0)
+    # btree.deleteKey(btree.root, 26)
+    list = []
+    btree.linearize(btree.root, list)
+    btree.insert(btree.root,14)
+    print(list)
+    print("------")
+    list = []
+    btree.linearize(btree.root, list)
+
+
+
+    # for i in range(50):
+        # print(i , " " , btree.search(btree.root,i))
+    # btree.insert(btree.root,22)
     # btree.linearize(btree.root, list)
     # print(list)
-    btree.insert(btree.root,10)
-    print(btree.search(btree.root,10))
-    btree.linearize(btree.root, list)
-    print(list)
     #print("Balanced ", btree.isBalanced())
     #print("RightNumberOfKeys", btree.rightNumberOfKeys(btree.root))
     #print("Linear ", btree.isLinear())

@@ -41,6 +41,7 @@ class BTree:
         """
         Cette méthode permet de rechercher une valeur dans l'arbre en le parcourant récursivement.
         Elle renvoie True si la valeur est trouvée dans l'arbre et False sinon.
+        Elle prend en paramètre le noeud à partir duquel la recherche dans l'arbre commence ainsi que la valeur à trouver.
         """
         
         # si dans noeud courant
@@ -82,7 +83,9 @@ class BTree:
     def getHeight(self, node) :
         """
         Cette méthode calcule et renvoie la hauteur de l'arbre récursivement.
+        Elle prend en paramètre un noeud à partir duquel elle calcule la hauteur de l'arbre.
         """
+
         max = 0
         tmp = 0
         if node.isLeaf:
@@ -97,6 +100,7 @@ class BTree:
         """
         Cette méthode permet de vérifier que l'arbre-B est équilibré en le parcourant et en vérifiant que toutes les branches font la même hauteur.
         """
+
         if len(self.root.children) == 0 :
             return True
         if( len(self.root.children) != len(self.root.keys) + 1):
@@ -110,7 +114,9 @@ class BTree:
     def rightNumberOfKeys(self, node) : 
         """
         Cette méthode vérifie que les contraintes minimum et maximum du nombre de clés dans chaque noeud sont vérifiées en parcourant l'arbre récursivement.
+        Elle prend en paramètre un noeud de départ pour la vérification.
         """
+
         bool = len(node.keys) <= self.nbKeysMax and len(node.keys) >= self.nbKeysMin
         if not bool :
             return False
@@ -123,7 +129,9 @@ class BTree:
     def linearize(self,node,list):
         """
         Cette méthode permet de linéariser l'arbre-B en le parcourant de gauche à droite depuis la racine.
+        Elle prend en paramètre un noeud de départ dans l'arbre et une liste que la fonction met à jour avec les valeurs des clés de l'arbre. Cette dernière doit être préalablement vide.
         """
+
         #Si c'est une feuille, on rajoute toute les clefs
         if node.isLeaf:
             return list.extend(node.keys) 
@@ -134,6 +142,14 @@ class BTree:
                 list.append(node.keys[i])
 
     def insert(self, node, valueToInsert):
+        """
+        Cette méthode permet d'insérer une valeur dans l'arbre tout en gardant une structure d'arbre valide.
+        Elle réalise un parcours d'arbre récursif.
+        Plusieurs cas d'exécutions existent pour l'insertion et des commentaires permet d'identifier ces diférents cas dans la fonction.
+        Elle prend en paramètre un noeud à partir duquel parcourir l'arbre pour l'insertion ainsi que la valeur que l'on souhaite insérer.
+        Renvoie True si la valeur a été correctement insérée dans l'arbre, False sinon.
+        """
+
         #si la valeur est déjà dans l'arbre, ne pas insérer
         if self.search(self.root, valueToInsert) :
             return False
@@ -162,6 +178,14 @@ class BTree:
         return True
 
     def split(self, node) :
+        """
+        Méthode auxiliaire permettant d'éclater des noeuds, utile pour l'insertion.
+        Elle crée deux nouveaux noeuds dans le cas d'un éclatement, place correctement les clés déjà présentes
+        dans l'arbre dans ces noeuds et met à jour les références vers ce's nouveaux fils.
+        Des commentaires dans la fonction sont présents pour montrer les différentes étapes d'exécution.
+        Elle prend en paramètre le noeud à éclater.
+        """
+
         middle = len(node.keys)//2
         keyInParent = node.keys[middle]
         keysNewChildLeft = []
@@ -175,7 +199,7 @@ class BTree:
             else: 
                 keysNewChildRight.append(node.keys[i])
         
-        #On créer les deux fils
+        #On crée les deux fils
         newChildLeft = Node(keysNewChildLeft, [])
         newChildRight = Node(keysNewChildRight, [])
         
@@ -205,6 +229,13 @@ class BTree:
 
         
     def insertList(self, values) :
+        """
+        Méthode permettant d'insérer une liste de valeurs.
+        Elle prend en paramètre une liste de valeurs à insérer.
+        Elle réalise l'insertion en itérant sur cete liste et en appelant la fonction insert sur chacun de ses éléments.
+        Elle renvoie True si toutes les valeurs ont été insérées, False si au moins une n'a pas été insérée.
+        """
+
         areInserted = True
         for val in values :
             inserted = self.insert(self.root, val)
@@ -223,6 +254,14 @@ class BTree:
             self.printArbre(child,depth = depth + 1)
 
     def deleteKey(self,node,valueToDelete):
+        """
+        Méthode permettant la suppression d'une valeur dans l'arbre.
+        Des commentaires sont présents dans le code de la fonction pour identifier les différents cas d'exécutions possibles.
+        Elle prend en paramètre le noeud à partir duquel parcourir l'arbre récursivement ainsi que la valeur à supprimer dans l'arbre.
+        Elle renvoie True si la valeur a bien été supprimée de l'arbre, False sinon.
+        WORK IN PROGRESS
+        """
+
         #recherche la valeur dans l'arbre, rien a faire si elle n'est pas dedans
         if not self.search(self.root, valueToDelete):
             return False
@@ -239,13 +278,13 @@ class BTree:
         if valueToDelete in node.keys:
             print("not in leaf")
             return
-        #Si la valeur à supprimer est inférieur à la clef la plus à gauche du noeud en cours
+        #Si la valeur à supprimer est inférieure à la clef la plus à gauche du noeud en cours
         elif valueToDelete < node.keys[0]:
             return self.deleteKey(node.children[0], valueToDelete)
-        #Si la valeur à inserer est inférieur à la clef la plus à droite du noeud en cours
+        #Si la valeur à inserer est inférieure à la clef la plus à droite du noeud en cours
         elif valueToDelete > node.keys[len(node.keys) -1 ]:
             return self.deleteKey(node.children[len(node.children)- 1], valueToDelete)
-        #Sinon on parcours les clefs pour trouver dans quel enfant aller par rapport aux clefs du noeud en cours
+        #Sinon on parcourt les clefs pour trouver dans quel enfant aller par rapport aux clefs du noeud en cours
         else:
             for i in range(1,len(node.keys)):
                 if valueToDelete < node.keys[i]:
@@ -258,6 +297,13 @@ class BTree:
         return True
 
     def leafUpdate(self, parent, leafUpdated):
+        """
+        Méthode auxiliaire permettant l'éclatement du noeud dans le cas de la suppression. L'arbre perdra alors un niveau de hauteur.
+        Les différents cas possibles d'exécutions sont identifiés par des commentaires dans le code.
+        Elle prend en paramètre le noeud père du noeud que l'on souhaite éclater ainsi que le noeud que l'on souhaite éclater.
+        WORK IN PROGRESS
+        """
+
         print("looking at ", parent.keys)
         indexNodeUpdatedInParent = 0
         while indexNodeUpdatedInParent < len(parent.children) and parent.children[indexNodeUpdatedInParent] != leafUpdated:
@@ -313,13 +359,26 @@ class BTree:
         #     parent.children.remove(leafUpdated)
 
 
-
     def takeLastKeyOfAndRemoveIt(self, node):
+        """
+        Méthode auxiliaire à la méthode d'éclatement de noeud pour la suppression.
+        Permet d'obtenir la plus grande clé présente dans un noeud tout en la retirant de la liste des clés du noeud.
+        Elle prend en paramètre le noeud duquel on souhaite extraire la plus grande valeur.
+        Retourne la dernière clé contenue dans le noeud passé en paramère.
+        """
+
         tmpKey = node.keys[len(node.keys) - 1]
         node.keys.pop(len(node.keys) - 1) 
         return tmpKey
 
     def takeFirstKeyOfAndRemoveIt(self, node):
+        """
+        Méthode auxiliaire à la méthode d'éclatement de noeud pour la suppression.
+        Permet d'obtenir la plus petite clé présente dans un noeud tout en la retirant de la liste des clés du noeud.
+        Elle prend en paramètre le noeud duquel on souhaite extraire la plus petite valeur.
+        Retourne la première clé contenue dans le noeud passé en paramère.
+        """
+
         tmpKey = node.keys[0]
         node.keys.remove(tmpKey)
         return tmpKey

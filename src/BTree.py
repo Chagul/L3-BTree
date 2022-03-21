@@ -325,6 +325,7 @@ class BTree:
                 parent.children.pop(0)
                 
         elif indexNodeUpdatedInParent == len(parent.keys):
+            None
 
         # if indexNodeUpdatedInParent != 0 and len(leftNeighbour.keys) > self.nbKeysMin:
         #     tmpKeyFromParent = parent.keys[indexNodeUpdatedInParent - 1]

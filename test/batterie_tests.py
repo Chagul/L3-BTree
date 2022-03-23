@@ -16,17 +16,32 @@ def batterie1() :
     print("Recherche de la valeur 42 :", btree.search(btree.root, 42))
     print("L'arbre est-il toujours un arbre-B ? :", btree.isValid(), "\n")
     print("Suppression des valeus : Algorithme de suppression non terminé.")
-
+    list = []
+    btree.linearize(btree.root, list)
+    print(list)
 
 def batterie2() :
+    values = [2,10,100,1000,5000,10000]
     btree = BTree(Node([], []), 6, 11)
     valuesToInsert = []
-    for i in range(10, 5001, 10) :
-        valuesToInsert.append(i)
-    for i in range(5, 5000, 10) :
-        valuesToInsert.append(i)
-    valuesToDelete = valuesToInsert.copy()
-    print("Insertion des valeurs :", btree.insertList(valuesToInsert), "\n")
+    for value in values:
+        print("=========\nTest avec ", value, "\n")
+        for i in range(10, value+1, 10) :
+            valuesToInsert.append(i)
+        for i in range(5, value, 10) :
+            valuesToInsert.append(i)
+        valuesToDelete = valuesToInsert.copy()
+        print("Insertion des valeurs :", btree.insertList(valuesToInsert))
+        print("Recherche de la valeur 4995 :", btree.search(btree.root, 4995))
+        print("L'arbre est-il un arbre-B ? :", btree.isValid())
+        print("L'arbre est-il un lineaire ? :", btree.isLinear())
+        print("L'arbre a t'il un bon nombre de clefs ? :", btree.rightNumberOfKeys(btree.root))
+        print("L'arbre est-il équilibré ? :", btree.isBalanced())
+        print("L'arbre à une hauteur de  :", btree.getHeight(btree.root))
+        print("Suppression des valeus : Algorithme de suppression non terminé.")        
+        print()
+
+
 
 if __name__ == "__main__":
     if(sys.argv[1] == "1") :

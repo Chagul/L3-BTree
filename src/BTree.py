@@ -131,7 +131,6 @@ class BTree:
         Cette méthode permet de linéariser l'arbre-B en le parcourant de gauche à droite depuis la racine.
         Elle prend en paramètre un noeud de départ dans l'arbre et une liste que la fonction met à jour avec les valeurs des clés de l'arbre. Cette dernière doit être préalablement vide.
         """
-
         #Si c'est une feuille, on rajoute toute les clefs
         if node.isLeaf:
             return list.extend(node.keys) 
@@ -185,7 +184,6 @@ class BTree:
         Des commentaires dans la fonction sont présents pour montrer les différentes étapes d'exécution.
         Elle prend en paramètre le noeud à éclater.
         """
-
         middle = len(node.keys)//2
         keyInParent = node.keys[middle]
         keysNewChildLeft = []
@@ -204,6 +202,10 @@ class BTree:
         newChildRight = Node(keysNewChildRight, [])
         
         #Pour chaque enfant du noeud en cours, on attribue ses anciens enfants sous les nouveaux enfants
+        middle = len(node.children)//2
+        if len(node.children) != 0:
+            newChildLeft.setIsLeaf(False)
+            newChildRight.setIsLeaf(False)
         for i in range(len(node.children)) :
             if(i < middle) :
                 node.children[i].parent = newChildLeft
@@ -213,7 +215,7 @@ class BTree:
                 newChildRight.children.append(node.children[i])
         #Si le noeud en cours est la racine, on créer une nouvelle racine
         if(node.parent is None):
-            newRoot = Node([keyInParent], [newChildLeft, newChildRight])
+            newRoot = Node([keyInParent], [newChildLeft,newChildRight])
             self.root = newRoot
         #Sinon on ajoute la clef du milieu au parent du noeud en cours, on l'enleve du noeud en cours
         else :
@@ -222,10 +224,13 @@ class BTree:
                 indexToInsert = indexToInsert + 1
             node.parent.keys.insert(indexToInsert,keyInParent)
             #Si l'ajout de notre clef depasse le nombre de clef max, on split le parent
-            if len(node.parent.keys) > self.nbKeysMax :
-                self.split(node.parent)
+            newChildLeft.parent = node.parent
+            newChildRight.parent = node.parent
             node.parent.children.insert(indexToInsert,newChildLeft)
             node.parent.children[indexToInsert + 1] = newChildRight
+            if len(node.parent.keys) > self.nbKeysMax :
+                self.split(node.parent)
+                
 
         
     def insertList(self, values) :
@@ -276,7 +281,6 @@ class BTree:
                 return
         
         if valueToDelete in node.keys:
-            print("not in leaf")
             return
         #Si la valeur à supprimer est inférieure à la clef la plus à gauche du noeud en cours
         elif valueToDelete < node.keys[0]:
@@ -304,14 +308,12 @@ class BTree:
         WORK IN PROGRESS
         """
 
-        print("looking at ", parent.keys)
         indexNodeUpdatedInParent = 0
         while indexNodeUpdatedInParent < len(parent.children) and parent.children[indexNodeUpdatedInParent] != leafUpdated:
             indexNodeUpdatedInParent = indexNodeUpdatedInParent + 1
         
         leftNeighbour = parent.children[indexNodeUpdatedInParent - 1]
         rightNeigbour = parent.children[indexNodeUpdatedInParent + 1]
-        print("index : ", indexNodeUpdatedInParent)
         ##Si on  peut prendre à gauche
         if indexNodeUpdatedInParent == 0:
             if len(rightNeigbour) > self.nbKeysMin:       

@@ -18,24 +18,22 @@ def batterie1() :
     print("Suppression des valeus : Algorithme de suppression non terminé.")
     list = []
     btree.linearize(btree.root, list)
-    print(list)
+    print("Valeurs présentes dans l'arbre :", list)
 
 def batterie2() :
-    values = [2,10,100,1000,5000,10000]
-    btree = BTree(Node([], []), 6, 11)
-    valuesToInsert = []
+    values = [2,10,100,1000,5000,10000, 100000]
     for value in values:
+        btree = BTree(Node([], []), 6, 11)
+        valuesToInsert = []
         print("=========\nTest avec ", value, "\n")
-        for i in range(10, value+1, 10) :
-            valuesToInsert.append(i)
-        for i in range(5, value, 10) :
+        for i in range(1, value+1) :
             valuesToInsert.append(i)
         valuesToDelete = valuesToInsert.copy()
         print("Insertion des valeurs :", btree.insertList(valuesToInsert))
         print("Recherche de la valeur 4995 :", btree.search(btree.root, 4995))
         print("L'arbre est-il un arbre-B ? :", btree.isValid())
         print("L'arbre est-il un lineaire ? :", btree.isLinear())
-        print("L'arbre a t'il un bon nombre de clefs ? :", btree.rightNumberOfKeys(btree.root))
+        print("Les conditions sur les nombres de clés sont-elles respectées pour chaque noeud ? :", btree.rightNumberOfKeys(btree.root))
         print("L'arbre est-il équilibré ? :", btree.isBalanced())
         print("L'arbre à une hauteur de  :", btree.getHeight(btree.root))
         print("Suppression des valeus : Algorithme de suppression non terminé.")        

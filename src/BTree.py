@@ -48,7 +48,7 @@ class BTree:
         if valueSearched in node.keys :
             return True
         #si il n'y a plus d'enfant, la valeur n'est pas là
-        if len(node.children) == 0 or len(node.keys) <= 0 :
+        if node.isLeaf :
             return False
         #partie gauche de la premiere cléf
         if(valueSearched < node.keys[0]):

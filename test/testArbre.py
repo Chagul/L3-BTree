@@ -1,6 +1,5 @@
 import unittest
 import sys
-import HtmlTestRunner 
 sys.path.append("../src")
 from BTree import BTree
 from Node import Node
@@ -269,7 +268,3 @@ class Test(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    # unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(
-            # report_name="testArbre",
-            # output="ResultatTest",
-            # combine_reports=True))

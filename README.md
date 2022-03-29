@@ -28,7 +28,7 @@ cd ..
 ```
 
 ## Exécuter les tests unitaires
-Ce projet a été réalisé en utilisant la méthode TDD. Vous pouvez exécuter les tests issus de ce développement. Vous aurez pour cela besoin du gestionaire de paquet [pip](https://pip.pypa.io/en/stable/installation/).
+Ce projet a été réalisé en utilisant la méthode TDD. Vous pouvez exécuter les tests issus de ce développement. Vous aurez pour cela besoin du gestionnaire de paquet [pip](https://pip.pypa.io/en/stable/installation/).
 ```
 cd test
 pip install -r requirement.txt
